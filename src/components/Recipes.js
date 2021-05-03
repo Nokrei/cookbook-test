@@ -197,7 +197,7 @@ const Recipes = () => {
             ingredients={contentItem.ingredients.map((item, idx) => {
               return (
                 <div key={idx}>
-                  {(item.quantity * numOfConsumers) / 2} {item.measurement}
+                  {(item.quantity * numOfConsumers) / 2} {item.measurement}{" "}
                   {item.ingredient}
                 </div>
               );
