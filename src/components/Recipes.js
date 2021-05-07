@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import curry from "../images/curry.jpg";
 import burger from "../images/burger.jpg";
 import eggs from "../images/eggs.jpg";
@@ -8,9 +8,13 @@ import "./App.css";
 import "./Recipe.css";
 import RecipeMenu from "./RecipeMenu";
 import RecipeContent from "./RecipeContent";
+import AddNewRecipe from "./AddNewRecipe";
+import NewRecipe from "./NewRecipe";
 const Recipes = () => {
-  // Array containing all recipe data.
-  const recipesArr = [
+  // Array containing all recipe data. Changed to state variable to be updated with new recipes by
+  // the user.
+
+  const [recipesArr, setRecipesArr] = useState([
     {
       author: "Jim",
       name: "Chicken Curry",
@@ -143,7 +147,7 @@ const Recipes = () => {
       preparation:
         "Combine onions and butter in the stockpot over medium heat. Cook and stir onions until translucent, 5 to 7 minutes. Add garlic and cook for 5 minutes. Stir in carrots and celery. Cook, stirring occasionally, until nearly tender, about 15 minutes. Stir in corn, parsley, and pepper.",
     },
-  ];
+  ]);
 
   // Stare variable to store recipe name clicked by user.
   const [content, setContent] = useState("");
@@ -168,6 +172,89 @@ const Recipes = () => {
   const handleSubtractConsumer = () => {
     numOfConsumers > 1 && setNumOfConsumers(numOfConsumers - 1);
   };
+
+  // State variables for Add new recipe button.
+  const [showNew, setShowNew] = useState(false);
+
+  // Show or hide new recipe input fields.
+  const handleShowNew = () => {
+    !showNew ? setShowNew(true) : setShowNew(false);
+  };
+
+  // Variables to store input values.
+  let authorField;
+  let nameField;
+  let imageField;
+  let descField;
+  let ing1Field;
+  let ing1UnitField;
+  let ing1AmountField;
+  let ing2Field;
+  let ing2UnitField;
+  let ing2AmountField;
+  let ing3Field;
+  let ing3UnitField;
+  let ing3AmountField;
+  let prepField;
+
+  // State variable to store new recipe data.
+  const [newRecipe, setNewRecipe] = useState({
+    author: "",
+    name: "",
+    description: "",
+    image: "",
+    ingredients: [
+      {
+        measurement: "",
+        quantity: 1,
+        ingredient: "",
+      },
+      {
+        measurement: "",
+        quantity: 1,
+        ingredient: "",
+      },
+      {
+        measurement: "",
+        quantity: 1,
+        ingredient: "",
+      },
+    ],
+    preparation: "",
+  });
+
+  // Upon clicking Add button, populate newRecipe with input data from the user.
+  const handleAddNewRecipe = () => {
+    setNewRecipe({
+      author: authorField.value,
+      name: nameField.value,
+      description: descField.value,
+      image: imageField.value,
+      ingredients: [
+        {
+          measurement: ing1UnitField.value,
+          quantity: Number(ing1AmountField.value),
+          ingredient: ing1Field.value,
+        },
+        {
+          measurement: ing2UnitField.value,
+          quantity: Number(ing2AmountField.value),
+          ingredient: ing2Field.value,
+        },
+        {
+          measurement: ing3UnitField.value,
+          quantity: Number(ing3AmountField.value),
+          ingredient: ing3Field.value,
+        },
+      ],
+      preparation: prepField.value,
+    });
+  };
+
+  // Update array of recipes once new recipe is added by the user.
+  useEffect(() => {
+    newRecipe.name && setRecipesArr((recipesArr) => [...recipesArr, newRecipe]);
+  }, [newRecipe]);
 
   return (
     <div className="recipes">
@@ -204,6 +291,26 @@ const Recipes = () => {
             })}
             prep={contentItem.preparation}
           />
+          <AddNewRecipe addClick={handleShowNew} />
+          {showNew && (
+            <NewRecipe
+              authorRef={(comp) => (authorField = comp)}
+              nameRef={(comp) => (nameField = comp)}
+              imageRef={(comp) => (imageField = comp)}
+              descRef={(comp) => (descField = comp)}
+              ing1Ref={(comp) => (ing1Field = comp)}
+              ing1UnitRef={(comp) => (ing1UnitField = comp)}
+              ing1AmountRef={(comp) => (ing1AmountField = comp)}
+              ing2Ref={(comp) => (ing2Field = comp)}
+              ing2UnitRef={(comp) => (ing2UnitField = comp)}
+              ing2AmountRef={(comp) => (ing2AmountField = comp)}
+              ing3Ref={(comp) => (ing3Field = comp)}
+              ing3UnitRef={(comp) => (ing3UnitField = comp)}
+              ing3AmountRef={(comp) => (ing3AmountField = comp)}
+              prepRef={(comp) => (prepField = comp)}
+              addNewRecipe={handleAddNewRecipe}
+            />
+          )}
         </div>
       ) : (
         <div className="recipe-select">
